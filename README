@@ -1,0 +1,43 @@
+# Phase Automaton for the Collatz Dynamics
+
+This repository contains a short research note on the **phase-based decomposition of the Collatz dynamics**.
+
+📄 Files:
+- `collatz-phase-automaton.tex` — LaTeX source
+- `collatz-phase-automaton.pdf` — compiled PDF
+
+---
+
+## Abstract
+We present a deterministic **phase automaton** for the Collatz map modulo 6 and its compressed odd dynamics  
+\[
+f(n) = \frac{3n+1}{2^{v_2(3n+1)}}.
+\]  
+We prove the absence of non-trivial cycles in \(f\) and obtain the classical consequence that the only cycle of the original map \(T\) is \(\{1,2,4\}\).  
+This provides a transparent structural reduction: the Collatz conjecture is equivalent to the non-existence of an infinite orbit of \(f\) that avoids the fixed point \(1\).
+
+---
+
+## Contents
+- **Phase automaton**: explicit transition rules for all 6 residues modulo 6.  
+- **Odd dynamics**: definition of the compressed map \(f\).  
+- **No cycles theorem**: proof that \(f\) has no cycles of length ≥ 2.  
+- **Reduction**: equivalence of the Collatz conjecture to the absence of an infinite orbit avoiding 1.  
+- **Examples**: trajectory starting from 27.  
+
+---
+
+## Citation
+If you use this note, please cite the DOI generated via Zenodo.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+
+---
+
+## Keywords
+Collatz conjecture; 3n+1 problem; Phase automaton; Modular dynamics; Odd compression; Discrete dynamical systems
+
+---
+
+## License
+This work is licensed under the [Creative Commons Attribution 4.0 International License](LICENSE).

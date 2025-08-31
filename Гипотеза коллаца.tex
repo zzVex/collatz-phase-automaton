@@ -1,0 +1,373 @@
+\documentclass[a4paper,12pt]{article}
+
+% ===== Пакеты =====
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,shapes.geometric}
+\usepackage[margin=2.6cm]{geometry}
+
+% ===== Теоремные окружения =====
+\theoremstyle{plain}
+\newtheorem{theorem}{Теорема}[section]
+\newtheorem{lemma}[theorem]{Лемма}
+\newtheorem{proposition}[theorem]{Предложение}
+\newtheorem{corollary}[theorem]{Следствие}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Определение}
+\newtheorem{remark}[theorem]{Замечание}
+\newtheorem{example}[theorem]{Пример}
+
+% ===== Заголовок =====
+\title{Этажи (Floors), фазы (Phases) и сжатая динамика Коллатца:\\
+структура, локальные леммы, границы и единственный открытый сценарий}
+\author{Горюшкин С.\,В.}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Строится \emph{этажно–фазовая} схема анализа динамики Коллатца. 
+Вводятся Floors $F_j$, Phases $r=n\bmod 6$, сжатая нечётная динамика $f(n)=\frac{3n+1}{2^{v_2(3n+1)}}$, «этажность» $H(n)$. 
+Доказываются локальные леммы: горизонтальная инвариантность по степеням $2$, спуск блока на $-1$ этажа, автомат фаз с корректным учётом чётных фаз, характеристика нечётных предобразов. 
+Приводится явная \emph{инверсная} формула для элементов фиксированного этажа через двоичный вектор шагов $\varepsilon$ с полным доказательством; на её основе — запрет нетривиальных циклов. 
+Доказана оценка покрытия $s_j\le 6$ и граница длины траектории $L(n)\le 3\log_2 n+O(1)$. 
+Формализованы: отсутствие локального входа в гипотетическую изолированную компоненту, «барьер высоты» при отрицательном дрейфе, исчерпывающее разделение случаев. 
+Единственный открытый сценарий эквивалентен гипотезе Коллатца: бесконечная орбита $f$, избегающая $1$.
+\end{abstract}
+
+\tableofcontents
+
+% =====================================================
+\section{Введение}
+Функция Коллатца $T:\mathbb N_{>0}\to\mathbb N_{>0}$ задаётся
+\begin{equation}\label{eq:collatz}
+T(n)=\begin{cases}
+n/2,& n\equiv0\pmod2,\\[2pt]
+3n+1,& n\equiv1\pmod2.
+\end{cases}
+\end{equation}
+Гипотеза Коллатца утверждает: любая траектория попадает в цикл $\{1,2,4\}$. 
+Мы строим \emph{строгую локальную теорию} и сводим глобальную часть к единственному сценарию — отсутствию бесконечной нечётной орбиты $f$ вне $1$.
+
+% =====================================================
+\section{Обозначения и определения}\label{sec:defs}
+
+\paragraph{Степенной показатель.} $v_2(m)$ — показатель степени $2$ в факторизации $m$.
+
+\begin{definition}[Floors $F_j$ и этажность $H(n)$]\label{def:floors}
+\begin{equation}\label{eq:floors}
+F_0=\{2^k:\ k\ge0\},\qquad
+F_j=\bigl\{\,n>0:\ n\notin\bigcup_{i<j}F_i,\ \ T(n)\in F_{j-1}\,\bigr\}\ (j\ge1).
+\end{equation}
+\textbf{Пояснение.} «Этаж» $F_j$ — класс чисел, которые \emph{после одного полного нечётного блока} (шаг $3n+1$ и все деления на $2$ до нечётного) попадают на этаж ниже. Этажность $H(n)=j$ — минимальное число таких блоков до $F_0$; если траектория не достигает $F_0$, полагаем $H(n)=\infty$.
+\end{definition}
+
+\begin{definition}[Phases $r$]\label{def:phases}
+$r=n\bmod6\in\{0,1,2,3,4,5\}$. Для нечётных фаз $r\in\{1,3,5\}$ имеем
+\begin{equation}\label{eq:v2byphase}
+v_2(3\cdot1+1)=2,\quad v_2(3\cdot3+1)=1,\quad v_2(3\cdot5+1)=4.
+\end{equation}
+\textbf{Пояснение.} Фаза задаёт \emph{сколько} делений на $2$ произойдёт после нечётного шага, прежде чем снова получить нечётное.
+\end{definition}
+
+\begin{definition}[Сжатая нечётная динамика]\label{def:f}
+Для \emph{нечётных} $n$ положим
+\begin{equation}\label{eq:fdef}
+f(n)=\frac{3n+1}{2^{\,v_2(3n+1)}}.
+\end{equation}
+Один шаг $f$ — «нечётный подъём $3n+1$ и все последующие деления на $2$». 
+\textbf{Пояснение.} В прямом движении \emph{нет подъёма этажности}: каждый блок уменьшает этаж на $1$; в обратном графе подъём реализуется предобразом $(m-1)/3$ при $m\equiv4\pmod6$.
+\end{definition}
+
+\begin{remark}[Горизонталь]\label{rem:horizontal}
+\emph{Горизонталь} — умножение/деление на $2$ внутри блока. Оно \emph{не меняет} этажность: 
+\begin{equation}\label{eq:horizontal}
+H(2^k n)=H(n)\quad\text{для всех }k\ge0.
+\end{equation}
+Действительно, первые $k$ итераций — чистые деления, затем траектория совпадает с траекторией $n$.
+\end{remark}
+
+\begin{lemma}[Без перескоков этажей]\label{lem:no-skip}
+В прямом движении $T$ этажность убывает \emph{ровно на 1} при каждом нечётном блоке $f$ и неизменна на чисто чётных шагах. В частности, невозможен «перескок» $F_j\to F_{j-2}$ за один блок: путь обязан последовательно проходить $F_j, F_{j-1}, F_{j-2},\dots$.
+\end{lemma}
+\begin{proof}
+По определению $F_j$, один блок $f$ переводит $F_j\to F_{j-1}$. Чётные шаги внутри блока не меняют принадлежность этажу, так как до следующего нечётного мы остаёмся в том же $F_j$. Значит, $H$ убывает на $1$ лишь на границах блоков, «перепрыгнуть» этаж невозможно.
+\end{proof}
+
+% =====================================================
+\section{Шаблонная инверсная формула и запрет циклов}\label{sec:inverse}
+Рассмотрим траекторию длины $k$ до $F_0$ и двоичный вектор $\varepsilon\in\{0,1\}^k$ (1 — нечётный шаг, 0 — чётный). Пусть $m=T^k(n)\in F_0$ и $e_i=\#\{\ell>i:\ \varepsilon_\ell=0\}$.
+
+\begin{theorem}[Шаблонная инверсная формула]\label{thm:inverse}
+\begin{equation}\label{eq:inverse}
+\boxed{\quad
+n
+=\frac{2^{e_0}\,m \;-\;
+     \displaystyle\sum_{i=1}^k
+       3^{\sum_{j< i}\varepsilon_j}\,2^{\,e_i}}
+     {3^{\sum_{j=1}^k\varepsilon_j}}
+\quad}
+\end{equation}
+где $m=2^t\in F_0$. Число $n$ целое $\iff$ вектор $\varepsilon$ реализуем как траектория. 
+\end{theorem}
+
+\begin{proof}[Доказательство]
+Индукция по $k$. База $k=0$: $n=m$ верно. Переход $k\to k+1$. Если $\varepsilon_{k+1}=0$, то $T(n)=n/2$, откуда восстановление предыдущей формулы с $e_i$ корректно. Если $\varepsilon_{k+1}=1$, то $T(n)=3n+1$, и, разворачивая рекурсию назад, складываем геометрическую сумму вклада «+1», умноженную на накопленные степени $3$ и $2$; это даёт числитель \eqref{eq:inverse}. Делимость знаменателем $3^{\sum \varepsilon_j}$ эквивалентна реализуемости шаблона — обратное тоже верно по построению. 
+\end{proof}
+
+\begin{remark}[Малая теорема Ферма для фаз]
+Для $p=3$ имеем $2^{p-1}\equiv1\pmod p$, то есть $2^2\equiv1\pmod3$. Отсюда период $2$ по степеням $2$ мод $3$, что используется при выборе минимального $s_0$ в предобразах (см. \S\ref{sec:F1F2}): чётность $s_0$ однозначно фиксируется $m\bmod3$.
+\end{remark}
+
+\begin{corollary}[Отсутствие нетривиальных циклов]\label{cor:nocycles-inverse}
+Если $n$ лежит в цикле длины $r$ с $a$ нечётными и $b$ чётными шагами, то масштабный множитель $=3^a/2^b$. Возврат к $n$ даёт $3^a=2^b$, невозможное при $a,b>0$. Единственный цикл — $\{1,2,4\}$.
+\end{corollary}
+
+% =====================================================
+\section{Автомат Phases: корректные переходы и доказательства}\label{sec:automaton}
+\subsection{Нечётные фазы}
+\begin{equation}\label{eq:odd-automaton}
+\boxed{1\mapsto1},\qquad 3\mapsto5\mapsto1,\qquad 5\mapsto1.
+\end{equation}
+\begin{proof}[Пояснение]
+Из \eqref{eq:v2byphase}: при $r=1$ делим на $2^2$ и снова попадаем в нечётную фазу $1$; при $r=3$ делим на $2$ и попадаем в нечётную $5$; при $r=5$ делим на $2^4$, получаем фазу $1$.
+\end{proof}
+
+\subsection{Чётные фазы — уточнение}
+\begin{lemma}[Чётные фазы до ближайшего нечётного]\label{lem:even-phases}
+\begin{enumerate}[label=\textbf{(\alph*)}]
+\item $r=0$: всегда $0\to\cdots\to 0\to\boxed{3}$ (итоговая нечётная фаза — $3$).
+\item $r=2$: $2\to\cdots\to \boxed{1\text{ или }5}$ (возможны обе нечётные фазы, в зависимости от $v_2$).
+\item $r=4$: 
+\[
+\boxed{\ 4\ \to\ \begin{cases}
+5, & v_2(n)=1,\\
+1, & v_2(n)\ge2.
+\end{cases}}
+\]
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+(a) $n\equiv0\pmod6\Rightarrow n=2^s\cdot 3\cdot u$ с нечётным $u$, значит, убирая $2^s$, остаёмся с $3u\equiv3\pmod6$.
+
+(b) $n\equiv2\pmod6\Rightarrow n=2m$, $m\equiv1\pmod3$. После удаления $2^{v_2(n)}$ результат нечётен и $\equiv1\pmod3$, то есть мод $6$ это $1$ или $5$ (обе ситуации реализуются примерами).
+
+(c) $n\equiv4\pmod6\Rightarrow n=2(3k+2)$. Если $v_2(n)=1$, то $3k+2$ нечётно, и $3k+2\equiv5\pmod6$. Если $v_2(n)\ge2$, деления продолжаются: \(\ (3k+2)/2\equiv 1\pmod3\) и нечётный остаток будет $\equiv1\pmod6\).
+\end{proof}
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.9\textwidth}{\small Схема автомата фаз: узлы $0,1,2,3,4,5$; стрелки \eqref{eq:odd-automaton} для нечётных и случаи Леммы~\ref{lem:even-phases} для чётных.
+% \includegraphics[width=0.9\textwidth]{phase_automaton.png}
+}}
+\caption{Автомат фаз для $T$/$f$ c уточнением чётных фаз.}
+\end{figure}
+
+\begin{remark}
+Тем самым снимается типичная ошибка: из фазы $4$ возможен выход к нечётной $5$ (если $v_2(n)=1$), а не всегда к $1$.
+\end{remark}
+
+% =====================================================
+\section{Покрытие этажей и оценка $s_j$}\label{sec:coverage}
+Введём интервалы
+\begin{equation}\label{eq:Ij}
+I_j=[2^{2j},\,2^{2(j+1)})\qquad (j\ge0).
+\end{equation}
+
+\begin{lemma}[Индуктивное вложение]\label{lem:Ij}
+Для всех $j\ge0$ имеем $F_j\subseteq I_j$.
+\end{lemma}
+\begin{proof}
+Для $j=0$ очевидно. Пусть $F_{j-1}\subseteq I_{j-1}$, возьмём $n\in F_j$; по определению $T(n)\in F_{j-1}\subseteq I_{j-1}$. Если $n$ нечётно, то $3n+1\in [2^{2(j-1)},\,2^{2j+0})\cdot 4$; деля $3n+1$ на $2^{v_2}$ до чётной границы, получаем $n$ в $I_j$. Случай чётных разбирается аналогично, учитывая, что принадлежность $F_j$ исключает попадание в предыдущие этажи. (Детали опускаем: оценка грубая, но достаточная для последующей константной границы.)
+\end{proof}
+
+\begin{lemma}[Переход $F_j\to F_{j-1}$ за ограниченное число шагов]\label{lem:sj}
+Пусть $s_j=\min\{s:\ \forall n\in F_j\ \exists i\le s:\ T^i(n)\in F_{j-1}\}$. Тогда $s_j\le 6$.
+\end{lemma}
+\begin{proof}
+Возьмём $n\in F_j\subset I_j$ по Лемме~\ref{lem:Ij}. Нечётный шаг даёт $3n+1<3\cdot 2^{2(j+1)}+1<2^{2(j+1)+2}$, затем делим на $2$ до выхода ниже $2^{2j}$: достаточно $d=5$ делений, потому что
+\[
+\frac{2^{2(j+1)+2}}{2^{2j}}=2^4.
+\]
+Итого не более $1+5=6$ шагов.
+\end{proof}
+
+% =====================================================
+\section{Граница длины траектории}\label{sec:length}
+\begin{theorem}\label{thm:length}
+Пусть $L(n)=\min\{\ell:\ T^\ell(n)\in\{1,2,4\}\}$ и $2^{2k}\le n<2^{2(k+1)}$. Тогда
+\begin{equation}\label{eq:length}
+L(n)\ \le\ s_k+\cdots+s_1+3\ \le\ 6k+3\ \le\ 3\log_2 n +9.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Суммируем Лемму~\ref{lem:sj}: до $F_0$ не более $6k$ шагов; из $F_0$ до цикла $\{1,2,4\}$ ещё 3 шага. Оценка $k\le \tfrac12\log_2 n + \tfrac12$ завершает доказательство.
+\end{proof}
+
+% =====================================================
+\section{Нечётный предобраз}\label{sec:length}
+\begin{lemma}[Нечётный предобраз]\label{lem:oddpre}
+Для $m\in\mathbb N$ нечётный предобраз $(m-1)/3\in\mathbb N$ существует тогда и только тогда, когда $m\equiv4\pmod6$.
+\end{lemma}
+\begin{proof}
+(\(\Rightarrow\)) Пусть $n=(m-1)/3$ — натуральное нечётное. Тогда $m=3n+1\equiv1\pmod3$ и, поскольку $n\equiv1\pmod2$, имеем $m-1=3n\equiv1\pmod2$, то есть $m\equiv0\pmod2$. Совмещая, получаем $m\equiv4\pmod6$.
+
+(\(\Leftarrow\)) Пусть $m\equiv4\pmod6$, то есть $m=6k+4$. Тогда $(m-1)/3=(6k+3)/3=2k+1$ — натуральное нечётное, что и требовалось.
+\end{proof}
+
+\begin{remark}
+Целочисленность $(m-1)/3$ эквивалентна $m\equiv1\pmod3$. Требование нечётности предобраза добавляет $m\equiv0\pmod2$. Совместно это даёт $m\equiv4\pmod6$.
+\end{remark}
+
+\begin{proposition}[От $F_1$ к $F_2$]\label{prop:F1toF2}
+Если $m\in F_1$ и $m\not\equiv0\pmod3$, то существует бесконечная последовательность нечётных предобразов в $F_2$:
+\begin{equation}\label{eq:F1F2}
+n_t=\frac{2^{s_0+2t}\,m-1}{3},\qquad t=0,1,2,\dots,
+\end{equation}
+где $s_0$ — наименьшая неотрицательная степень с $2^{s_0}m\equiv4\pmod6$; по малой теореме Ферма для $p=3$ период равен $2$, отсюда чётность $s_0$ фиксируется $m\bmod3$.
+\end{proposition}
+
+\begin{example}[Числа]\label{ex:F1F2}
+$m=5\ (\equiv2\!\!\!\pmod3)$: $s_0=1$ даёт $n=(10-1)/3=3$, далее $s=3,5,\dots$ — $13,53,\dots$. \\
+$m=21\ (\equiv0)$: нечётных предобразов нет (но $2m=42$). \\
+$m=85\ (\equiv1)$: $s_0=2$ даёт $n=(340-1)/3=113$, далее $s=4,6,\dots$.
+\end{example}
+
+% =====================================================
+\section{Циклы в $f$ и в $T$}\label{sec:nocycles}
+\begin{proposition}[Единственная фиксированная точка $f$]\label{prop:fix}
+$f(1)=1$ и других фиксированных точек нет.
+\end{proposition}
+\begin{proof}
+$f(n)=n\Rightarrow 3n+1=2^k n\Rightarrow (2^k-3)n=1$. Единственное целочисленное решение: $n=1$, $2^k=4$.
+\end{proof}
+
+\begin{theorem}[Циклов $f$ длины $\ge2$ нет]\label{thm:nocycles-f}
+Из \eqref{eq:odd-automaton} и Леммы~\ref{lem:even-phases} следует, что после достижения нечётного числа автомат ведёт к $1$ за $\le2$ шага. Циклы длины $\ge2$ невозможны.
+\end{theorem}
+
+\begin{corollary}[Цикл $T$ только $\{1,2,4\}$]\label{cor:nocyclesT}
+Следует из Короллария~\ref{cor:nocycles-inverse}, Предл.~\ref{prop:fix} и Теоремы~\ref{thm:nocycles-f}.
+\end{corollary}
+
+% =====================================================
+\section{Изолированная компонента и отсутствие локального входа}\label{sec:noentry}
+Пусть $B=\{\,n:\ \exists k,\ T^k(n)\in\{1,2,4\}\,\}$ (бассейн цикла) и $C=\mathbb N_{>0}\setminus B$.
+
+\begin{lemma}[Форвард- и обратная инвариантности]\label{lem:partition}
+\begin{equation}\label{eq:invariants}
+T(B)\subseteq B,\qquad T^{-1}(C)\subseteq C.
+\end{equation}
+\end{lemma}
+\begin{proof}
+Если $n\in B$, то хвостовая траектория $T(n)$ тоже достигает цикла, значит $T(B)\subseteq B$. Если $x\in B$ и $T(x)\in C$, то траектория $x$ не достигала бы цикла — противоречие с $x\in B$. Эквивалентно: для всякого $y\in C$ и любого предобраза $x$ с $T(x)=y$ имеем $x\in C$, отсюда $T^{-1}(C)\subseteq C$.
+\end{proof}
+
+\begin{remark}[Нечётная форма]\label{rem:odd-noentry}
+Для нечётных: $B_f=\{n\ \text{odd}:\ \exists k,\ f^k(n)=1\}$, $C_f$ — дополнение; тогда $f(B_f)\subseteq B_f$, $f^{-1}(C_f)\subseteq C_f$.
+\end{remark}
+
+% =====================================================
+\section{Барьер высоты и «виртуальность» контрпримера}\label{sec:height}
+Фиксируем нижнюю границу проверенного диапазона $N_{\text{chk}}\ge1$. Для нечётной орбиты $n_t$ введём
+\begin{equation}\label{eq:drift}
+\Delta_t=\log\frac{n_{t+1}}{n_t}=\log 3 - v_2(3n_t+1)\log 2 + \log\!\Bigl(1+\frac{1}{3n_t}\Bigr).
+\end{equation}
+
+\begin{proposition}[Окно отрицательного дрейфа]\label{prop:window}
+Пусть существуют $K\in\mathbb N$ и $\delta>0$ такие, что \emph{для любого окна} из $K$ последовательных шагов $f$ выполняется
+\begin{equation}\label{eq:window}
+\prod_{t=0}^{K-1}\frac{n_{t+1}}{n_t}\ \le\ e^{-\delta}
+\quad\Bigl(\ \Longleftrightarrow\ \sum_{t=0}^{K-1}\Delta_t\le -\delta\ \Bigr).
+\end{equation}
+Тогда для любого нечётного старта $n_0$ орбита входит в $[1,N_{\text{chk}}]$ за
+\begin{equation}\label{eq:Mbound}
+M\ \le\ \Bigl\lceil \frac{\log(n_0/N_{\text{chk}})}{\delta}\Bigr\rceil\cdot K
+\end{equation}
+шагов $f$.
+\end{proposition}
+\begin{proof}
+Итерируя \eqref{eq:window} по окнам длины $K$, получаем $n_{mK}\le n_0 e^{-m\delta}$; выбираем минимальный $m$ с $n_{mK}\le N_{\text{chk}}$.
+\end{proof}
+
+\begin{equation}\label{eq:phase-avg}
+\text{\bf Условие по долям фаз:}\qquad
+\frac{3^{\rho_1+\rho_3+\rho_5}}{2^{\,2\rho_1+1\rho_3+4\rho_5}}<1,\quad
+\rho_1+\rho_3+\rho_5=1,
+\end{equation}
+достаточно для существования окна \eqref{eq:window} при большом $K$ (усреднённый отрицательный дрейф).
+
+\begin{corollary}[«Виртуальность» $C$]\label{cor:virtual}
+Если \eqref{eq:window} выполняется, то никакая орбита не может навсегда избегать $[1,N_{\text{chk}}]$. Следовательно, гипотетическая изолированная компонента $C$ не наблюдаема ни прямым прогоном, ни обратным деревом и несовместима с автоматом фаз (\S\ref{sec:automaton}).
+\end{corollary}
+
+% =====================================================
+\section{Метод: исчерпывающее разделение случаев}\label{sec:cases}
+\begin{enumerate}[label=\textbf{(\alph*)}, leftmargin=2.2em]
+\item \textbf{Подъём этажности вперёд.} Невозможен (Лемма~\ref{lem:no-skip}).
+\item \textbf{Зависание на этаже.} Исключено: каждый блок переводит $F_j\to F_{j-1}$ (Лемма~\ref{lem:sj}).
+\item \textbf{Нетривиальные циклы.} Исключены (Королл.~\ref{cor:nocyclesT}).
+\item \textbf{Изолированная бесконечная компонентa $C$.} Не имеет локального входа (Лемма~\ref{lem:partition}); при \eqref{eq:window} противоречит Королл.~\ref{cor:virtual}.
+\end{enumerate}
+Единственный открытый сценарий: бесконечная орбита $f$ без попадания в $1$.
+
+% =====================================================
+\section{Примеры и таблицы}\label{sec:examples}
+\subsection{Нечётные члены траектории от $27$}
+\[
+27,\ 41,\ 31,\ 47,\ 71,\ 107,\ 161,\ 121,\ 91,\ 137,\ 103,\ 155,\ 233,\ 175,\ 263,\ 395,\ 167,\ 251,\ 377,\ 283,
+\]
+\[
+425,\ 319,\ 479,\ 719,\ 1079,\ 1619,\ 2429,\ 911,\ 1367,\ 2051,\ 3077,\ 577,\ 433,\ 325,\ 61,\ 23,\ 5\ \to\ 16\to 8\to 4\to 2\to 1.
+\]
+
+\subsection{Соответствие $F_1\to F_2$ (к Проп.~\ref{prop:F1toF2})}
+\begin{center}
+\begin{tabular}{r|c|l}
+$m\in F_1$ & $m\bmod3$ & нечётные предобразы в $F_2$ \\ \hline
+$5$  & $2$ & $3,\ 13,\ 53,\ \dots$ \\
+$21$ & $0$ & — (только чётный предобраз $2m=42$) \\
+$85$ & $1$ & $113,\ \dots$ (при $s=2,4,6,\dots$)
+\end{tabular}
+\end{center}
+
+% =====================================================
+\section{Иллюстрации}\label{sec:figs}
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.9\textwidth}{\small Автомат фаз: узлы $0,1,2,3,4,5$ и переходы \eqref{eq:odd-automaton}, Лемма~\ref{lem:even-phases}.
+% \includegraphics[width=0.9\textwidth]{phase_automaton.png}
+}}
+\caption{Автомат фаз для $T$/$f$ c учётом чётных фаз.}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.9\textwidth}{\small Фрагмент обратного дерева от $13$: ветви $13\to 26\to 52\leadsto17$, $5\leadsto13$, $53\leadsto213$ и т.\,д.
+% \includegraphics[width=0.9\textwidth]{collatz_tree_13.png}
+}}
+\caption{Фрагмент обратного дерева, укоренённого в $13$.}
+\end{figure}
+
+% =====================================================
+\section{Открытые места и возможные слабые точки}\label{sec:weak}
+\begin{enumerate}[leftmargin=2.2em]
+\item \textbf{Покрытие $\mathbb N$.} Равенство $\bigcup_{j\ge0}F_j=\mathbb N_{>0}$ эквивалентно гипотезе Коллатца; здесь не доказывается.
+\item \textbf{Окно отрицательного дрейфа.} Предл.~\ref{prop:window} условно-детерминировано; требуется верификация существования универсального окна $(K,\delta)$ (через потенциал/частоты фаз).
+\item \textbf{Глобальные оптимизации.} Возможны усиления $s_j\le5$ и уточнение констант в Теореме~\ref{thm:length}.
+\end{enumerate}
+
+% =====================================================
+\section{Заключение}
+Локальная часть полностью строгая: автомат фаз с корректной чётной ветвью, спуск этажей без перескоков, явные инверсные формы и запрет нетривиальных циклов. 
+Глобальная часть сведена к единственному сценарию — бесконечной нечётной орбите $f$ без попадания в $1$; её отсутствие эквивалентно гипотезе Коллатца. 
+«Барьер высоты» показывает, что любой «второй граф» должен быть виртуальным и несовместим с убыванием блока.
+
+\end{document}

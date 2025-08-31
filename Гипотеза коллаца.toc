@@ -1,0 +1,21 @@
+\babel@toc {russian}{}\relax 
+\contentsline {section}{\numberline {1}Введение}{2}{section.1}%
+\contentsline {section}{\numberline {2}Обозначения и определения}{2}{section.2}%
+\contentsline {paragraph}{Степенной показатель.}{2}{section*.2}%
+\contentsline {section}{\numberline {3}Шаблонная инверсная формула и запрет циклов}{3}{section.3}%
+\contentsline {section}{\numberline {4}Автомат Phases: корректные переходы и доказательства}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Нечётные фазы}{4}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Чётные фазы — уточнение}{4}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Покрытие этажей и оценка $s_j$}{4}{section.5}%
+\contentsline {section}{\numberline {6}Граница длины траектории}{5}{section.6}%
+\contentsline {section}{\numberline {7}Нечётный предобраз}{5}{section.7}%
+\contentsline {section}{\numberline {8}Циклы в $f$ и в $T$}{6}{section.8}%
+\contentsline {section}{\numberline {9}Изолированная компонента и отсутствие локального входа}{6}{section.9}%
+\contentsline {section}{\numberline {10}Барьер высоты и «виртуальность» контрпримера}{6}{section.10}%
+\contentsline {section}{\numberline {11}Метод: исчерпывающее разделение случаев}{7}{section.11}%
+\contentsline {section}{\numberline {12}Примеры и таблицы}{7}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Нечётные члены траектории от $27$}{7}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Соответствие $F_1\to F_2$ (к Проп.~\ref {prop:F1toF2})}{8}{subsection.12.2}%
+\contentsline {section}{\numberline {13}Иллюстрации}{8}{section.13}%
+\contentsline {section}{\numberline {14}Открытые места и возможные слабые точки}{8}{section.14}%
+\contentsline {section}{\numberline {15}Заключение}{8}{section.15}%
